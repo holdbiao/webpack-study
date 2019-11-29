@@ -8,7 +8,7 @@ const SpeedMeasurePlugin = require("speed-measure-webpack-plugin") // 模块编�
 const smp = new SpeedMeasurePlugin()
 
 module.exports = smp.wrap({ // 增加模块编译速度插件
-    mode: 'development', // 模式 默认两种 production development
+    mode: 'production', // 模式 默认两种 production development
     entry: {
         index: './src/index.js', // 入口文件
     },
@@ -21,7 +21,7 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
         port: 3000, // 端口
         progress: true, // 输出运行进度到控制台
         contentBase: path.resolve(__dirname, 'dist'), // 服务目录
-        open: true, // 自动打开浏览器
+        open: false, // 自动打开浏览器
         compress: true, // gzip压缩, 启用gzip压缩的一切服务
         overlay: true // 编译出现错误时，将错误直接显示在页面上
     },
@@ -41,18 +41,6 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
     ],
     module: { // 模块
         rules: [ // 规则
-            // { // 需要配置.eslintrc.json
-            //     test: /\.js$/,
-            //     include: [path.resolve(__dirname, 'src')], // 指定检查的目录
-            //     exclude: /node_modules/,  // 忽略目录
-            //     use: {
-            //         loader: 'eslint-loader', // 安装eslint、eslint-loader
-            //         options: {
-            //             // fix: true, // 自动修复
-            //             enforce: 'pre' // previous、post 强制在其他loader前、后运行
-            //         }
-            //     }
-            // },
             {
                 test: /\.js$/,
                 exclude: /node_modules/, // 忽略规则
@@ -70,8 +58,7 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
                             }], // 修饰器等高级语法
                             ["@babel/plugin-proposal-class-properties", {
                                 "loose": true
-                            }],
-                            '@babel/plugin-transform-runtime' // @babel/runtime @babel/plugin-transform-runtime , grenarator等语法
+                            }]
                         ]
                     }
                 }

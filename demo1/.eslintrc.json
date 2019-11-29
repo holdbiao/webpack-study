@@ -1,0 +1,11 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "sourceType": "module",
+        "ecmaFeatures": {}
+    },
+    "rules": {
+        "no-var": 2
+    },
+    "env": {}
+}

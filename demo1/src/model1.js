@@ -1,2 +1,2 @@
-var model1 = 'model1'
-export default model1
+let model1 = 'model1';
+export default model1;
