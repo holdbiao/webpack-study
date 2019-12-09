@@ -6,7 +6,6 @@ const OptimizeCss = require('optimize-css-assets-webpack-plugin') // 压缩css
 const Uglifyjs = require('uglifyjs-webpack-plugin') // 压缩js
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin") // 模块编译速度
 const smp = new SpeedMeasurePlugin()
-const webpack = require('webpack')
 
 module.exports = smp.wrap({ // 增加模块编译速度插件
     mode: 'development', // 模式 默认两种 production development
@@ -38,16 +37,22 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
         }),
         new MiniCssExtractPlugin({ // css抽离插件，插入html
             filename: '[name].[hash:8].css'
-        }),
-        new webpack.ProvidePlugin({
-            $: 'jquery'  // 在每个模块都注入这个$, 将jquery暴露成$, 没挂在到window
         })
     ],
-    externals: {
-        'jquery': '$' // 忽略这个cdn外部引入的，不进行打包
-    },
     module: { // 模块
         rules: [ // 规则
+            // { // 需要配置.eslintrc.json
+            //     test: /\.js$/,
+            //     include: [path.resolve(__dirname, 'src')], // 指定检查的目录
+            //     exclude: /node_modules/,  // 忽略目录
+            //     use: {
+            //         loader: 'eslint-loader', // 安装eslint、eslint-loader
+            //         options: {
+            //             // fix: true, // 自动修复
+            //             enforce: 'pre' // previous、post 强制在其他loader前、后运行
+            //         }
+            //     }
+            // },
             {
                 test: /\.js$/,
                 exclude: /node_modules/, // 忽略规则
@@ -59,7 +64,7 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
                             '@babel/preset-env'
                         ],
                         plugins: [
-                            // '@babel/plugin-proposal-class-properties', // class语法
+                            // '@babel/plugin-proposal-class-properties', // clase语法
                             ["@babel/plugin-proposal-decorators", {
                                 "legacy": true
                             }], // 修饰器等高级语法
@@ -71,6 +76,13 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
                     }
                 }
             },
+            // css-loader 解析 @import '' 这种语法的
+            // style-loader 他是把css插入到head标签中
+            // loader 的特点，希望单一
+            // loader 的用法，字符串只用一个loder
+            // 多个loader需要 []
+            // loader的顺序 默认是从右到左执行  从下到上执行
+            // loader可以携程对象形式 可配置options
             {
                 test: /\.css$/,
                 use: [
@@ -87,11 +99,7 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
                     'postcss-loader', // 注意顺序
                     'less-loader' // less -> css  npm i less less-loader -D
                 ]
-            },
-            // {
-            //     test: require.resolve('jquery'), // 引用了jquery都暴露成window.$  模块需要引入
-            //     use: 'expose-loader?$'
-            // }
+            }
         ]
     },
     optimization: { // 优化项  使用这就默认不压缩js， 需用 uglifyjs-webpack-plugin
