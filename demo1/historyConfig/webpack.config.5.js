@@ -6,6 +6,7 @@ const OptimizeCss = require('optimize-css-assets-webpack-plugin') // 压缩css
 const Uglifyjs = require('uglifyjs-webpack-plugin') // 压缩js
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin") // 模块编译速度
 const smp = new SpeedMeasurePlugin()
+const webpack = require('webpack')
 
 module.exports = smp.wrap({ // 增加模块编译速度插件
     mode: 'development', // 模式 默认两种 production development
@@ -15,7 +16,6 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
     output: {
         filename: '[name].[hash:8].js', // 打包后的文件名 hash防止缓存问题
         path: path.resolve(__dirname, 'dist'), // 必须要为绝对路径
-        // publicPath: 'www.baidu.com' // cdn前缀
     },
     devServer: { // 开发服务器配置
         host: 'localhost', // 服务主机地址，默认localhost，0.0.0.0可供外部访问
@@ -37,35 +37,17 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
             hash: true // 增加hash bundle.js?87f9461b729bd1694630
         }),
         new MiniCssExtractPlugin({ // css抽离插件，插入html
-            filename: 'css/[name].[hash:8].css',
+            filename: '[name].[hash:8].css'
+        }),
+        new webpack.ProvidePlugin({
+            $: 'jquery'  // 在每个模块都注入这个$, 将jquery暴露成$, 没挂在到window
         })
     ],
+    externals: {
+        'jquery': '$' // 忽略这个cdn外部引入的，不进行打包
+    },
     module: { // 模块
         rules: [ // 规则
-            // { // 跟HtmlWebpackPlugin冲突报错
-            //     test: /\.(html|htm)$/i,
-            //     use: 'html-withimg-loader'
-            // },
-            // {
-            //     test: /\.(png|jpg|gif)$/,
-            //     use: 'file-loader'
-            // },
-            {
-                test: /\.(png|jpg|gif)$/,
-                /*
-                 做一个图片大小限制，当图片大于限制就转为base64
-                 否则file-loader产生真是图片
-                 */
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        // publicPath: 'www.biucdn.cn', // 单独做图片cdn
-                        limit: 2 * 1024,  // *k
-                        // outputPath: '/img'
-                        name: './images/[hash:8].[name].[ext]' // 打包到指定目录
-                    }
-                }
-            },
             {
                 test: /\.js$/,
                 exclude: /node_modules/, // 忽略规则
@@ -105,7 +87,11 @@ module.exports = smp.wrap({ // 增加模块编译速度插件
                     'postcss-loader', // 注意顺序
                     'less-loader' // less -> css  npm i less less-loader -D
                 ]
-            }
+            },
+            // {
+            //     test: require.resolve('jquery'), // 引用了jquery都暴露成window.$  模块需要引入
+            //     use: 'expose-loader?$'
+            // }
         ]
     },
     optimization: { // 优化项  使用这就默认不压缩js， 需用 uglifyjs-webpack-plugin

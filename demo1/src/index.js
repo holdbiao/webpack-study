@@ -32,11 +32,23 @@
 // var varvar;
 // console.log('hello biu!!!', model1);
 
-// 暴露全局变量
-// expose-loader : pre前面执行的loader; normal普通loader;内联loader; 后置 postloader 
-// import $ from 'jquery'
-// import $ from 'expose-loader?$!jquery' // 内联loader
-// import $ from 'jquery' // loader配置
-import $ from 'jquery' // 被externals忽略打包
-console.log($, window.$) // expose-loader 将jquery暴露到window
-console.log('window:', window.$)
+// // 暴露全局变量
+// // expose-loader : pre前面执行的loader; normal普通loader;内联loader; 后置 postloader 
+// // import $ from 'jquery'
+// // import $ from 'expose-loader?$!jquery' // 内联loader
+// // import $ from 'jquery' // loader配置
+// import $ from 'jquery' // 被externals忽略打包
+// console.log($, window.$) // expose-loader 将jquery暴露到window
+// console.log('window:', window.$)
+
+// webpack打包图片的处理
+// 1、在js中创建图片
+import logo from './logo.png' // 引入 配置file-loader就可以import引入图片了
+console.log(logo)
+let img = new Image()
+img.src = logo
+document.body.appendChild(img)
+// 2、css引入 依赖file-loader
+require('./index.css'); // background引入
+
+// 3、标签引入

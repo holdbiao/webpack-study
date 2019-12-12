@@ -1,5 +1,7 @@
 @import 'a.css';
 
 body {
-    background: blanchedalmond;
+    /* background: bisque; */
+
+    background: url('./logo.png');
 }
